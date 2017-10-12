@@ -1,10 +1,16 @@
 public class Client {
+	
 	public static void main(String[] args) {
+		FileController controller=new FileController();
+		controller.startFileView();
+		controller.testComposite();
 		
-		testComposite();
+		
 	}
+
 	public static void testComposite() {
 		FileComponent root=new Directory("");
+		FileComponent cur=root;
 		FileComponent read=new Directory("read");
 		FileComponent jim=new Directory("jim");
 		FileComponent tools=new Directory("tools");
@@ -24,8 +30,9 @@ public class Client {
 		jim.add(read);
 		jim.add(tools);
 		
-		root.add(jim);
+		root.add(jim); 
 		
+		cur.add(new Text("123"));
 		System.out.println(root.getSize());
 	}
 

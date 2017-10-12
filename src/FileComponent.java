@@ -12,13 +12,19 @@ public abstract class FileComponent {
 	public void remove(FileComponent f) {
 		throw new UnsupportedOperationException();
 	}
-	public FileComponent get() {
+	public FileComponent get(String name) {
 		throw new UnsupportedOperationException();
 	}
-	public ArrayList<String> search(FileComponent targetFile) {
+	public boolean search(FileComponent targetFile) {
 		throw new UnsupportedOperationException();
 	}
 	public String getPath(FileComponent targetFile) {
+		throw new UnsupportedOperationException();
+	}
+	public String getList() {
+		throw new UnsupportedOperationException();
+	}
+	public FileComponent getParent(FileComponent target) {
 		throw new UnsupportedOperationException();
 	}
 	

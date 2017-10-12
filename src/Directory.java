@@ -23,9 +23,8 @@ public class Directory extends FileComponent{
 	
 	static ArrayList<String>  resultList=new ArrayList<String>();
 	static boolean find=false;
-	public ArrayList<String> search(FileComponent targetFile) {
+	public boolean search(FileComponent targetFile) {
 		Iterator it=(Iterator) fileList.iterator();
-		
 		FileComponent f = null;
 		while(it.hasNext()) { 
 			f=(FileComponent) it.next();
@@ -36,28 +35,38 @@ public class Directory extends FileComponent{
 			}else if(f.getName().indexOf(".")>-1) continue;
 			else if(!find){
 				resultList.add(f.getName());
-				resultList=f.search(targetFile);
+				f.search(targetFile);
 			}
 		}
 		
 		if(!find && resultList.size()>0) {
 			resultList.remove(resultList.size()-1);
 		}
-		return resultList;
+		return find;
 	}
 	public String getPath(FileComponent targetFile) {
 		ArrayList<String>  resultList=new ArrayList<String>();
-		resultList=search(targetFile);
+		search(targetFile);
 		Iterator it=(Iterator) resultList.iterator();
 		String result="c:";
 		while(it.hasNext()) {
 			result+="/"+(String)it.next();
 		}
 		find=false;
-		resultList.clear();
+		initial();
 		return result;
 	}
 
+	public String getList() {
+		String result="";
+		Iterator it=(Iterator) fileList.iterator();
+		while(it.hasNext()) {
+			FileComponent f=(FileComponent)it.next();
+			result+=f.getName()+",";
+		}
+		
+		return result;
+	}
 
 	public int getSize() {
 		Iterator it=fileList.iterator();
@@ -68,13 +77,41 @@ public class Directory extends FileComponent{
 		}
 		return sum;
 	}
+	public FileComponent getParent(FileComponent target) {
+		FileComponent f = null;
+		int index=resultList.size()-2;
+		if(index>-1) 
+			f=get(resultList.get(index));
+		initial();
+		return f;
+	}
+	public FileComponent get(String name) {
+		String result="";
+		Iterator it=(Iterator) fileList.iterator();
+		FileComponent f = null;
+		while(it.hasNext()) {
+			
+			f=(FileComponent)it.next();
+			if(f.getName().indexOf(".")>-1) continue;
+			if(f.getName().equals(name)) break;
+			f=f.get(name); 
+			
+			
+			
+		}
+		
+		return f;
+	}
 	public void setName(String s) {
 		name=s;
 	}
 	public String getName() {
 		return name;
 	}
-
-
+	
+	private void initial() {
+		resultList.clear();
+		find=false;
+	}
 
 }
