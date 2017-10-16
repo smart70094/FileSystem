@@ -1,10 +1,13 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+
 import javax.swing.JTextField;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -15,10 +18,16 @@ public class View extends JFrame {
 	JButton  dirBtn = new JButton("dirBtn");
 	JButton  moveBtn = new JButton("moveBtn");
 	JButton  moveBackBtn = new JButton("moveBackBtn");
+	JButton  removeBtn = new JButton("removeBtn");
+	JButton  renameBtn = new JButton("renameBtn");
+	JButton  undoBtn = new JButton("undoBtn");
+	JButton  redoBtn = new JButton("redoBtn");
 	JTextField inputName=new JTextField(5); 
+	
+	String reName="";
 	FileController fileController=new FileController();
 	JPanel panel = new JPanel();
-	
+	HashMap<String,JLabel> map;
 	static volatile View view=null;
 	public static View getInstance() {
 		if(view==null) {
@@ -52,8 +61,7 @@ public class View extends JFrame {
 				if(!inputName.getText().equals("")) {
 					result=inputName.getText();
 				}
-				panel.add(new JLabel(result));
-				revalidate();
+				addFile(result);
 			}
 		});  
         
@@ -63,17 +71,30 @@ public class View extends JFrame {
 				if(!inputName.getText().equals("")) {
 					result=inputName.getText()+".txt";
 				}
-				panel.add(new JLabel(result));
+				addFile(result);
+			}
+		});  
+        
+        removeBtn.addActionListener(new ActionListener(){ 
+			public void actionPerformed(ActionEvent e) { 
+				String target=inputName.getText();
+				JLabel lab=map.get(target);
+				panel.remove(lab);
 				revalidate();
 			}
 		});  
         
+    
         
         btnPanel.add(addDirectoryBtn);
         btnPanel.add(dirBtn);
         btnPanel.add(addTextBtn);
         btnPanel.add(moveBtn);
         btnPanel.add(moveBackBtn);
+        btnPanel.add(removeBtn);
+        btnPanel.add(undoBtn);
+        btnPanel.add(redoBtn);
+        btnPanel.add(renameBtn);
         btnPanel.add(inputName);
         
         
@@ -81,16 +102,44 @@ public class View extends JFrame {
         parent.add(btnPanel);
         
         add(parent);
+        
+        map=new HashMap<String,JLabel>();
+	}
+	public String message() {
+		reName=JOptionPane.showInputDialog("½Ð¿é¤J©m¦W");
+		JLabel lab=map.get(getInputNameString());
+		lab.setText(reName);
+		map.remove(getInputNameString());
+		map.put(reName, lab);
+		revalidate();
+		return reName;
 	}
 	public void clearView() {
 		panel.removeAll();
 	}
 	public void addFile(String name) {
-		panel.add(new JLabel(name));
+		JLabel lab=new JLabel(name);
+		panel.add(lab);
+		map.put(name, lab);
+		revalidate();
+	}
+	public void removeFile(String name) {
+		JLabel lab=map.get(name);
+		panel.remove(lab);
+		revalidate();
+	}
+	public void renameFile(String name,String s) {
+		JLabel lab=map.get(s);
+		lab.setText(name);
+		map.remove(s);
+		map.put(name, lab);
 		revalidate();
 	}
 	public String getInputNameString() {
 		return inputName.getText();
+	}
+	public String getRename() {
+		return reName;
 	}
 	
 	public void addDirectoryListener(ActionListener listenForAddDirectoryBtn) {
@@ -108,6 +157,18 @@ public class View extends JFrame {
 	public void addMoveBackListener(ActionListener listenForMoveBackBtn) {
 		moveBackBtn.addActionListener(listenForMoveBackBtn);
 	}
+	public void addRemoveListener(ActionListener listenForRemoveBtn) {
+		removeBtn.addActionListener(listenForRemoveBtn);
+	}
+	public void addundoListener(ActionListener listenForundoBtn) {
+		undoBtn.addActionListener(listenForundoBtn);
+	}
+	public void addRedoListener(ActionListener listenFforRedoBtn) {
+		redoBtn.addActionListener(listenFforRedoBtn);
+	}
 	
+	public void addRenameListener(ActionListener listenFforRenameBtn) {
+		renameBtn.addActionListener(listenFforRenameBtn);
+	}
 
 }

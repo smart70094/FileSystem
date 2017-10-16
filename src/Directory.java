@@ -11,15 +11,16 @@ public class Directory extends FileComponent{
 	
 	Directory(String name){
 		super.name=name;
+		super.type="directory";
 	}
 	
 	public void add(FileComponent f) {
 		fileList.add(f);
 	}
-	public void remove(FileComponent f) {
+	public void remove(String name) {
+		FileComponent f=get(name);
 		fileList.remove(f);
 	}
-	
 	
 	static ArrayList<String>  resultList=new ArrayList<String>();
 	static boolean find=false;
@@ -90,16 +91,11 @@ public class Directory extends FileComponent{
 		Iterator it=(Iterator) fileList.iterator();
 		FileComponent f = null;
 		while(it.hasNext()) {
-			
 			f=(FileComponent)it.next();
 			if(f.getName().indexOf(".")>-1) continue;
 			if(f.getName().equals(name)) break;
 			f=f.get(name); 
-			
-			
-			
 		}
-		
 		return f;
 	}
 	public void setName(String s) {
@@ -113,5 +109,4 @@ public class Directory extends FileComponent{
 		resultList.clear();
 		find=false;
 	}
-
 }

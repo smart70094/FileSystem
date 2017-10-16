@@ -4,12 +4,13 @@ public abstract class FileComponent {
 	
 	protected String name="";
 	protected String context="";
+	protected String type="";
 	
 	
 	public void add(FileComponent f) {
 		throw new UnsupportedOperationException();
 	}
-	public void remove(FileComponent f) {
+	public void remove(String name) {
 		throw new UnsupportedOperationException();
 	}
 	public FileComponent get(String name) {

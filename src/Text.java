@@ -4,6 +4,7 @@ public class Text extends FileComponent{
 	
 	Text(String name){
 		super.name=name+".txt";
+		super.type="file";
 	}
 
 	@Override
