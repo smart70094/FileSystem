@@ -2,8 +2,9 @@ public class Client {
 	
 	public static void main(String[] args) {
 		FileController controller=new FileController();
-		controller.startView();
-		controller.testComposite();
+		controller.startFileView();
+		//controller.testComposite();
+		
 		
 		
 	}
