@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class SystemDirectory extends FileComponent{
 	ArrayList<FileComponent> fileList=new ArrayList<FileComponent>();
@@ -17,9 +16,9 @@ public class SystemDirectory extends FileComponent{
 		FileComponent f=get(name);
 		fileList.remove(f);
 	}
-
+	
 	public boolean search(FileComponent targetFile) {
-		Iterator it=(Iterator) fileList.iterator();
+		FileListIterator it=new FileListIterator(fileList);
 		FileComponent f = null;
 		while(it.hasNext()) { 
 			f=(FileComponent) it.next();
@@ -39,22 +38,9 @@ public class SystemDirectory extends FileComponent{
 		}
 		return find;
 	}
-	public String getPath(FileComponent targetFile) {
-		ArrayList<String>  resultList=new ArrayList<String>();
-		search(targetFile);
-		Iterator it=(Iterator) resultList.iterator();
-		String result="c:";
-		while(it.hasNext()) {
-			result+="/"+(String)it.next();
-		}
-		find=false;
-		initial();
-		return result;
-	}
-
 	public String getList() {
 		String result="";
-		Iterator it=(Iterator) fileList.iterator();
+		FileListIterator it=new FileListIterator(fileList);
 		while(it.hasNext()) {
 			FileComponent f=(FileComponent)it.next();
 			result+=f.getName()+"-"+f.type+"-"+f.getSize()+",";
@@ -64,11 +50,11 @@ public class SystemDirectory extends FileComponent{
 	}
 
 	public int getSize() {
-		Iterator it=fileList.iterator();
+		FileListIterator it=new FileListIterator(fileList);
 		int sum=0;
 		while(it.hasNext()) {
 			FileComponent f=(FileComponent)it.next();
-			sum+=getName().length()+f.getSize();
+			sum+=f.getSize();
 		}
 		return sum;
 	}
@@ -82,16 +68,17 @@ public class SystemDirectory extends FileComponent{
 	}
 	public FileComponent get(String name) {
 		String result="";
-		Iterator it=(Iterator) fileList.iterator();
+		FileListIterator it=new FileListIterator(fileList);
 		FileComponent f = null;
 		while(it.hasNext()) {
 			f=(FileComponent)it.next();
-			if(f.getName().equals(name)) break;
-			if(f.type.equals("directory")||f.type.equals("systemDirectory")) 
+			if(f.getName().equals(name)) return f;
+			if(f.type.equals("Directory")||f.type.equals("SystemDirectory")) {
 				f=f.get(name); 
-			
+				if(f!=null) return f;
+			}
 		}
-		return f;
+		return null;
 	}
 	public void setName(String s) {
 		name=s;

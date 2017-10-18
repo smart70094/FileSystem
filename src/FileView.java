@@ -377,7 +377,9 @@ public class FileView  extends JFrame{
 	public void addCreateFolderListener(ActionListener listenForCreateFolderBtn) {
 		createFolderBtn.addActionListener(listenForCreateFolderBtn);
 	}
-	
+	public void addCreateSystemFolderListener(ActionListener listenForCreateSystemFolderBtn) {
+		createSystemFloderBtn.addActionListener(listenForCreateSystemFolderBtn);
+	}
 	public void addStartContextListener(ActionListener listenForStartContextBtn) {
 		treeBtn.addActionListener(listenForStartContextBtn);
 	}
@@ -404,4 +406,5 @@ public class FileView  extends JFrame{
 	public void addRedoListener(ActionListener listenFforRedoBtn) {
 		redoBtn.addActionListener(listenFforRedoBtn);
 	}
+	
 }

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 
 public class FileFacade {
 	FileComponent root;
@@ -30,10 +29,8 @@ public class FileFacade {
 		root.add(jim); 
 		root.add(fff);
 		root.name="root";
-		return currentNode.getList();
+		return root.getList();
 	}
-	
-
 	
 	public void add(String name,String type) {
 		addFile(name,type);
@@ -49,6 +46,8 @@ public class FileFacade {
 		case "Directory":
 			currentNode.add(new Directory(name));		
 			break;
+		case "SystemDirectory":
+			currentNode.add(new SystemDirectory(name));
 		case "Text":
 			currentNode.add(new Text(name));	
 			break;
@@ -69,13 +68,11 @@ public class FileFacade {
 	}
 	
 	public void rename(String name,String s) {
-		
 			FileInfo fileInfo=new FileInfo();
 			fileInfo.state="rename";
 			fileInfo.context=name+","+s;
 			renameFile(name,s);
 			save(fileInfo);
-		
 	}
 	public void updateFileContext(String name,String s) {
 		FileComponent fc=currentNode.get(name);
@@ -175,7 +172,6 @@ public class FileFacade {
 	}
 	public String redo() {
 		FileMemento fileMemento=fileCareTaker.redo(currentNode);
-		
 		if(fileMemento!=null) {
 			FileInfo fileInfo=fileMemento.getMemento();
 			String state=fileInfo.state;

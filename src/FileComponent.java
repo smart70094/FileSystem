@@ -17,22 +17,17 @@ public abstract class FileComponent {
 	public FileComponent get(String name) {
 		throw new UnsupportedOperationException();
 	}
-	
-	static ArrayList<String>  resultList=new ArrayList<String>();
-	static boolean find=false;
-	public boolean search(FileComponent targetFile) {
-		throw new UnsupportedOperationException();
-	}
-	public String getPath(FileComponent targetFile) {
-		throw new UnsupportedOperationException();
-	}
 	public String getList() {
 		throw new UnsupportedOperationException();
 	}
 	public FileComponent getParent(FileComponent target) {
 		throw new UnsupportedOperationException();
 	}
-	
+	static ArrayList<String>  resultList=new ArrayList<String>();
+	static boolean find=false;
+	public boolean search(FileComponent targetFile) {
+		throw new UnsupportedOperationException();
+	}
 	public abstract int getSize();
 	public abstract String getName();
 	public String getInfo() {
