@@ -4,11 +4,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.Font;
@@ -57,7 +59,7 @@ public class FileView  extends JFrame{
 		//左上角のFile Manager
 		JLabel filemanagerLabel = new JLabel("File Manager");
 		filemanagerLabel.setFont(new Font("Arial", Font.BOLD, 36));
-		filemanagerLabel.setBounds(6, 0, 225, 61);
+		filemanagerLabel.setBounds(6, 0, 225, 52);
 		getContentPane().add(filemanagerLabel);
 		
 		//蓋File  Managerの白色
@@ -65,18 +67,18 @@ public class FileView  extends JFrame{
 		JLabel whiteLabel = new JLabel("");
 		whiteLabel.setIcon(whiteImg);
 		whiteLabel.setBackground(Color.WHITE);
-		whiteLabel.setBounds(-13, 0, 244, 60);
+		whiteLabel.setBounds(-13, 0, 244, 52);
 		getContentPane().add(whiteLabel);
 		
 		//登出按鈕
 		JButton logoutBtn = new JButton("登出");
 		logoutBtn.setFont(new Font("微軟正黑體", Font.PLAIN, 18));
 		logoutBtn.setForeground(new Color(255, 255, 255));
-		logoutBtn.setBounds(935, 0, 87, 61);
+		logoutBtn.setBounds(935, 0, 87, 52);
 		
 		//去文字周邊的框框
 		logoutBtn.setFocusPainted(false);
-		logoutBtn.setBackground(new Color(11,128,241));
+		logoutBtn.setBackground(new Color(4,51,96));
 	    logoutBtn.setOpaque(true);
 		getContentPane().add(logoutBtn);
 		
@@ -86,7 +88,7 @@ public class FileView  extends JFrame{
 		moveBackBtn.setBackground(new Color(11,128,241));
 		moveBackBtn.setFocusPainted(false);
 		moveBackBtn.setIcon(leftImg);
-		moveBackBtn.setBounds(230, 0, 44, 62);
+		moveBackBtn.setBounds(230, 0, 44, 52);
 		getContentPane().add(moveBackBtn);
 		
 		//右邊白色箭頭
@@ -95,11 +97,11 @@ public class FileView  extends JFrame{
 		moveBtn.setFocusPainted(false);
 		moveBtn.setBackground(new Color(11, 128, 241));
 		moveBtn.setIcon(rightImg);
-		moveBtn.setBounds(369, 0, 44, 62);
+		moveBtn.setBounds(369, 0, 44, 52);
 		getContentPane().add(moveBtn);
 		
 		//Tree Diagram按鈕
-		ImageIcon treeImg = new ImageIcon("im/tree.png");
+		ImageIcon treeImg = new ImageIcon("im/showContext.png");
 		treeBtn = new JButton("New button");
 		treeBtn.setIcon(treeImg);
 		treeBtn.setBounds(604, 148, 186, 36); 
@@ -184,7 +186,7 @@ public class FileView  extends JFrame{
 		JLabel garyLabel = new JLabel("");
 		garyLabel.setBackground(new Color(55,59,70));
 		garyLabel.setOpaque(true);
-		garyLabel.setBounds(-3, 62, 1047, 157);
+		garyLabel.setBounds(-15, 51, 1047, 157);
 		getContentPane().add(garyLabel);
 		
 		//Layer上の藍色
@@ -195,36 +197,49 @@ public class FileView  extends JFrame{
 		blueLabel.setBackground(new Color(11,128,241));
 		blueLabel.setOpaque(true);
 		getContentPane().add(blueLabel);
+		//放名稱 類型 大小の藍色長條
+		JLabel smallBlueLabel = new JLabel("       名稱                                                                                                             類型                                大小");
+		smallBlueLabel.setForeground(new Color(255, 255, 255));
+		smallBlueLabel.setFont(new Font("微軟正黑體", Font.BOLD, 21));
+		smallBlueLabel.setBounds(-15, 213, 1047, 41);
+		smallBlueLabel.setBackground(new Color(11,128,241));
+		smallBlueLabel.setOpaque(true);
+		getContentPane().add(smallBlueLabel);
 		
 		//放值の地方
-		String[] columnNames = {"姓名", "性別", "嗜好"};
+		String[] columnNames = {"", "", ""};
 		fileModel = new DefaultTableModel(){
 	        @Override
 	        public boolean isCellEditable(int rowIndex, int columnIndex){
 	            return false;
 	        }
 	    };
+	   
+		
 	    fileModel.setColumnIdentifiers(columnNames);
-		table = new JTable();
+	    JScrollPane scrollPane = new JScrollPane(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER); 
+	    table = new JTable();
+		scrollPane.setBounds(-3, 246, 1025, 389);
+		getContentPane().add(scrollPane);
+		scrollPane.setViewportView(table);
+		
+		table.getTableHeader().setVisible(false); 
 		table.setModel(fileModel);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		int vColIndex =0;
 		TableColumn col = table.getColumnModel().getColumn(vColIndex);
-		int height = 500;
-		col.setPreferredWidth(height);
 		table.setFont(new Font("微軟正黑體", Font.PLAIN, 20));
-		table.setBounds(0, 270, 1022, 365);
-	    table.setRowHeight(30);
-
+		table.setRowHeight(30);
+		int height = 610;
+		col.setPreferredWidth(height);
+		col.setPreferredWidth(height);
+		TableColumn col1 = table.getColumnModel().getColumn(1);
+		col1.setPreferredWidth(200); 
+		TableColumn col2 = table.getColumnModel().getColumn(2);
+		col2.setPreferredWidth(250); 
+	
+	   
 		
-		//放名稱 類型 大小の藍色長條
-		JLabel smallBlueLabel = new JLabel("       名稱                                                                                                             類型                                大小");
-		smallBlueLabel.setForeground(new Color(255, 255, 255));
-		smallBlueLabel.setFont(new Font("微軟正黑體", Font.BOLD, 21));
-		smallBlueLabel.setBounds(0, 229, 1028, 41);
-		smallBlueLabel.setBackground(new Color(11,128,241));
-		smallBlueLabel.setOpaque(true);
-		getContentPane().add(smallBlueLabel);
 		
 		//最下面灰色の長條
 		JLabel lblNewLabel = new JLabel("");
@@ -232,7 +247,12 @@ public class FileView  extends JFrame{
 		lblNewLabel.setOpaque(true);
 		lblNewLabel.setBounds(-13, 634, 1035, 47);
 		getContentPane().add(lblNewLabel);
-		getContentPane().add(table);
+		
+		
+		
+		
+		
+		
 		
 	}
 	
@@ -406,5 +426,4 @@ public class FileView  extends JFrame{
 	public void addRedoListener(ActionListener listenFforRedoBtn) {
 		redoBtn.addActionListener(listenFforRedoBtn);
 	}
-	
 }
