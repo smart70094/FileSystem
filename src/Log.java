@@ -1,9 +1,8 @@
 
-
-public class Text extends FileComponent{
-	Text(String name){
+public class Log extends FileComponent{
+	Log(String name){
 		super.name=name;
-		super.type="Text";
+		super.type="Log";
 	}
 
 	public int getSize() {

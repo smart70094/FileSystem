@@ -1,8 +1,9 @@
-import java.awt.Image;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -10,14 +11,32 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.Font;
+
+
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 public class FileView  extends JFrame{
 	private JTextField renameText;
+	
+	private JButton createFolderBtn;
+	private JButton createSystemFloderBtn;
+	private JButton moveBtn;
+	private JButton moveBackBtn;
+	private JButton removeBtn;
+	private JButton renameBtn;
+	private JButton undoBtn;
+	private JButton redoBtn;
+	private JButton createTxtBtn;
+	private JButton createLogBtn;
+	private JButton treeBtn;
+	private JButton okBtn;
+	
+	private JTextArea contextJTextField;
+	
 	private JTable table;
-	DefaultTableModel fileDTO;
+	DefaultTableModel fileModel;
 	static volatile FileView fileView=null;
 	public static FileView getInstance() {
 		if(fileView==null) {
@@ -28,13 +47,13 @@ public class FileView  extends JFrame{
 		}
 		return fileView;
 	}
-
+	
 	public FileView() {
 		
 		setBounds(100, 100, 1034, 717);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
-		
+		setLocationRelativeTo(null);
 		//左上角のFile Manager
 		JLabel filemanagerLabel = new JLabel("File Manager");
 		filemanagerLabel.setFont(new Font("Arial", Font.BOLD, 36));
@@ -63,85 +82,78 @@ public class FileView  extends JFrame{
 		
 		//左邊白色箭頭
 		ImageIcon leftImg = new ImageIcon("im/smallleft.png");
-		JButton btnNewButton = new JButton("");
-		btnNewButton.setBackground(new Color(11,128,241));
-		btnNewButton.setFocusPainted(false);
-		btnNewButton.setIcon(leftImg);
-		btnNewButton.setBounds(230, 0, 44, 62);
-		getContentPane().add(btnNewButton);
+		moveBackBtn = new JButton("");
+		moveBackBtn.setBackground(new Color(11,128,241));
+		moveBackBtn.setFocusPainted(false);
+		moveBackBtn.setIcon(leftImg);
+		moveBackBtn.setBounds(230, 0, 44, 62);
+		getContentPane().add(moveBackBtn);
 		
 		//右邊白色箭頭
 		ImageIcon rightImg = new ImageIcon("im/smallright.png");
-		JButton button = new JButton("");
-		button.setFocusPainted(false);
-		button.setBackground(new Color(11, 128, 241));
-		button.setIcon(rightImg);
-		button.setBounds(369, 0, 44, 62);
-		getContentPane().add(button);
+		moveBtn = new JButton("");
+		moveBtn.setFocusPainted(false);
+		moveBtn.setBackground(new Color(11, 128, 241));
+		moveBtn.setIcon(rightImg);
+		moveBtn.setBounds(369, 0, 44, 62);
+		getContentPane().add(moveBtn);
 		
 		//Tree Diagram按鈕
 		ImageIcon treeImg = new ImageIcon("im/tree.png");
-		JButton treeBtn = new JButton("New button");
+		treeBtn = new JButton("New button");
 		treeBtn.setIcon(treeImg);
-		treeBtn.setBounds(604, 148, 186, 36);
-		treeBtn.addActionListener(new ActionListener(){ 
-			public void actionPerformed(ActionEvent e) { 
-				int column = 0;
-				int row = table.getSelectedRow();
-				String value = table.getModel().getValueAt(row, column).toString();
-				System.out.println(value);
-			}
-		});  
+		treeBtn.setBounds(604, 148, 186, 36); 
 		getContentPane().add(treeBtn);
 		
 		//createTxt按鈕
 		ImageIcon createTxtImg = new ImageIcon("im/createTxT.png");
-		JButton createTxtBtn = new JButton("New button");
+		createTxtBtn = new JButton("New button");
 		createTxtBtn.setIcon(createTxtImg);
 		//沒外框
 		//createTxtBtn.setBorderPainted(false); 
 		createTxtBtn.setBounds(24, 95, 135, 36);
 		getContentPane().add(createTxtBtn);
 		
-		//createDoc按鈕
-		ImageIcon createDocImg = new ImageIcon("im/createdoc.png");
-		JButton createDocBtn = new JButton("New button");
-		createDocBtn.setForeground(Color.WHITE);
-		createDocBtn.setIcon(createDocImg);
-		createDocBtn.setBounds(208, 95, 150, 36);
-		getContentPane().add(createDocBtn);
+		//createLog按鈕
+		ImageIcon createLogImg = new ImageIcon("im/createdoc.png");
+		createLogBtn = new JButton("New button");
+		createLogBtn.setForeground(Color.WHITE);
+		createLogBtn.setIcon(createLogImg);
+		createLogBtn.setBounds(208, 95, 150, 36);
+		getContentPane().add(createLogBtn);
 		
 		//createFolder按鈕
 		ImageIcon createFolderImg = new ImageIcon("im/createfolder.png");
-		JButton createFolderBtn = new JButton("New button");
+		createFolderBtn = new JButton("New button");
 		createFolderBtn.setIcon(createFolderImg);
 		createFolderBtn.setBounds(394, 95, 170, 36);
+		
 		getContentPane().add(createFolderBtn);
 		
 		//createSystemFolder按鈕
 		ImageIcon createSystemFloderImg = new ImageIcon("im/create system floder.png");
-		JButton createSystemFloderBtn = new JButton("New button");
+		createSystemFloderBtn = new JButton("New button");
 		createSystemFloderBtn.setIcon(createSystemFloderImg);
 		createSystemFloderBtn.setBounds(604, 95, 268, 36);
 		getContentPane().add(createSystemFloderBtn);
 		
 		//remove按鈕
 		ImageIcon removeImg = new ImageIcon("im/remove.png");
-		JButton removeBtn = new JButton("New button");
+		removeBtn = new JButton("New button");
 		removeBtn.setIcon(removeImg);
 		removeBtn.setBounds(900, 95, 112, 36);
 		getContentPane().add(removeBtn);
 		
 		//redo按鈕
 		ImageIcon redoImg = new ImageIcon("im/redo.png");
-		JButton redoBtn = new JButton("New button");
+		redoBtn = new JButton("New button");
 		redoBtn.setIcon(redoImg);
 		redoBtn.setBounds(833, 148, 81, 36);
 		getContentPane().add(redoBtn);
 		
 		//undo按鈕
 		ImageIcon undoImg = new ImageIcon("im/undo.png");
-		JButton undoBtn = new JButton("New button");
+		undoBtn = new JButton("New button");
 		undoBtn.setIcon(undoImg);
 		undoBtn.setBounds(932, 148, 80, 36);
 		getContentPane().add(undoBtn);
@@ -154,7 +166,7 @@ public class FileView  extends JFrame{
 		
 		//rename按鈕
 		ImageIcon renameImg = new ImageIcon("im/rename.png");
-		JButton renameBtn = new JButton("New button");
+		renameBtn = new JButton("New button");
 		renameBtn.setIcon(renameImg);
 		renameBtn.setBounds(452, 148, 112, 36);
 		getContentPane().add(renameBtn);
@@ -186,21 +198,15 @@ public class FileView  extends JFrame{
 		
 		//放值の地方
 		String[] columnNames = {"姓名", "性別", "嗜好"};
-		fileDTO = new DefaultTableModel(){
+		fileModel = new DefaultTableModel(){
 	        @Override
 	        public boolean isCellEditable(int rowIndex, int columnIndex){
 	            return false;
 	        }
 	    };
-	    fileDTO.setColumnIdentifiers(columnNames);
-		
-		
-		fileDTO.addRow(new Object[]{"狡兔三窟1","1","1000000"});
-		/*for(int i=0;i<3;i++) {
-			fileDTO.addRow(new Object[]{"狡兔三窟1","1","1000000"});
-		}*/
+	    fileModel.setColumnIdentifiers(columnNames);
 		table = new JTable();
-		table.setModel(fileDTO);
+		table.setModel(fileModel);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		int vColIndex =0;
 		TableColumn col = table.getColumnModel().getColumn(vColIndex);
@@ -209,7 +215,6 @@ public class FileView  extends JFrame{
 		table.setFont(new Font("微軟正黑體", Font.PLAIN, 20));
 		table.setBounds(0, 270, 1022, 365);
 	    table.setRowHeight(30);
-	   getContentPane().add(table);
 
 		
 		//放名稱 類型 大小の藍色長條
@@ -229,10 +234,174 @@ public class FileView  extends JFrame{
 		getContentPane().add(lblNewLabel);
 		getContentPane().add(table);
 		
-		
-		
+	}
 	
+	public String getAlertInput(String question) {
+		String result=JOptionPane.showInputDialog(question);
+		return result;
+	}
+	
+	public void startContext() {
+		JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(350, 350);
+        frame.setLocationRelativeTo( null );
+        frame.setUndecorated(true);
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        
+        JLabel fileNameLab = new JLabel("File");
+        fileNameLab.setFont(new Font("Arial", Font.BOLD, 20));
+        panel.add( fileNameLab);
+        
+        panel.add( contextJTextField );
+        
+        JPanel btnPanel=new JPanel();
+        
+        JButton cannelBtn=new JButton("cannel");
+        okBtn.addActionListener(new ActionListener(){ 
+			public void actionPerformed(ActionEvent e) { 
+				frame.dispose();
+			}
+		});
+        cannelBtn.addActionListener(new ActionListener(){ 
+			public void actionPerformed(ActionEvent e) { 
+				frame.dispose();
+			}
+		});
+        btnPanel.add(okBtn);
+        btnPanel.add(cannelBtn);
+         
+        panel.add(btnPanel);
+        
+        frame.setContentPane(panel);
+        frame.setVisible(true);
+        
+
+      
+	}
+	
+	
+	public void alert(String context) {
+		  JOptionPane.showMessageDialog(this,context,
+                  "提示訊息", JOptionPane.INFORMATION_MESSAGE);
+	}
+	public void addFile(String[] str) {
+		if(str[1].equals("Text")) str[0]=str[0]+".txt";
+		else if(str[1].equals("Log")) str[0]=str[0]+".log";
+		fileModel.addRow(str);
+	}
+	public void removeFile() {
+		int index=table.getSelectedRow();
+		if(index!=-1)
+			fileModel.removeRow(index);
+		else
+			alert("請選擇要刪除的檔案");
+	}
+	public void removeFile(String name) {
+		int size=fileModel.getRowCount();
+		String str;
+		for(int i=0;i<size;i++) {
+			str=clearType(table.getModel().getValueAt(i, 0).toString());
+
+			
+			if(str.equals(name)) {
+				fileModel.removeRow(i);
+				break;
+			}
+		}
+	}
+	public void renameFile(String name,String rename,String type) {
+		rename=addType(rename,type);
+		int size=fileModel.getRowCount();
+		String str;
+		for(int i=0;i<size;i++) {
+			str=clearType(table.getModel().getValueAt(i, 0).toString());
+			if(str.equals(name)) {
+				table.getModel().setValueAt(rename, i,0);
+				break;
+			}
+		}	int index=table.getSelectedRow();	
 		
+	}
+	public void updateSize(String name,int filesize) {
 		
+		int size=fileModel.getRowCount();
+		String str;
+		for(int i=0;i<size;i++) {
+			str=clearType(table.getModel().getValueAt(i, 0).toString());
+			if(str.equals(name)) {
+				table.getModel().setValueAt(filesize, i,2);
+				break;
+			}
+		}	
+		
+	}
+	public String getSelectedFile() {
+		String result="";
+		int row = table.getSelectedRow();
+		if(row!=-1) {
+			result = table.getModel().getValueAt(row, 0).toString();
+			//去副檔名
+			result=clearType(result);
+		}
+		return result;
+	
+	}
+	public String getContext() {
+		return contextJTextField.getText();
+	}
+	public void setContext(String context) {
+		contextJTextField.setText(context);
+	}
+	public void clearModel() {
+		fileModel.setRowCount(0);
+	}
+	public String clearType(String result) {
+		if(result.indexOf(".") >-1) result=result.substring(0, result.indexOf("."));
+		return result;
+	}
+	public String addType(String name,String type) {
+		if(type.equals("Text")) name=name+".txt";
+		else if(type.equals("Log")) name=name+".log";
+		return name;
+	}
+	
+	public void addCreateTxtListener(ActionListener listenForCreateTxtBtn) {
+		createTxtBtn.addActionListener(listenForCreateTxtBtn);
+	}
+	public void addCreateLogListener(ActionListener listenForCreateLogBtn) {
+		createLogBtn.addActionListener(listenForCreateLogBtn);
+	}
+	public void addCreateFolderListener(ActionListener listenForCreateFolderBtn) {
+		createFolderBtn.addActionListener(listenForCreateFolderBtn);
+	}
+	
+	public void addStartContextListener(ActionListener listenForStartContextBtn) {
+		treeBtn.addActionListener(listenForStartContextBtn);
+	}
+	public void addContextListener(ActionListener listenForContextBtn) {
+		okBtn=new JButton("ok");
+		contextJTextField = new JTextArea();
+		okBtn.addActionListener(listenForContextBtn);
+	}
+	public void addMoveListener(ActionListener listenForMoveBtn) {
+		moveBtn.addActionListener(listenForMoveBtn);
+	}
+	public void addMoveBackListener(ActionListener listenForMoveBackBtn) {
+		moveBackBtn.addActionListener(listenForMoveBackBtn);
+	}
+	public void addRemoveListener(ActionListener listenForRemoveBtn) {
+		removeBtn.addActionListener(listenForRemoveBtn);
+	}
+	public void addRenameListener(ActionListener listenFforRenameBtn) {
+		renameBtn.addActionListener(listenFforRenameBtn);
+	}
+	public void addUndoListener(ActionListener listenForundoBtn) {
+		undoBtn.addActionListener(listenForundoBtn);
+	}
+	public void addRedoListener(ActionListener listenFforRedoBtn) {
+		redoBtn.addActionListener(listenFforRedoBtn);
 	}
 }

@@ -3,92 +3,107 @@ import java.awt.event.ActionListener;
 
 public class FileController {
 	FileFacade fileFacade=new FileFacade();
-	View view;
+	FileView fileView;
 
 	public void testComposite() {
-		String s=fileFacade.loadingTest();
-		
+		String s=fileFacade.loadingSystemFolder();
 		String[] resultArr=s.split(",");
 		//iterator
 		for(int i=0;i<resultArr.length;i++) {
-			view.addFile(resultArr[i]);
+			fileView.addFile(fileFacade.getInfo(resultArr[i]));
 		}
-		
-	}
-	public void startView() {
-		if(view==null) {
-			view=view.getInstance();
-			view.setVisible(true);
-			view.addDirectoryListener(new AddDirectoryListener());
-			view.addDirListener(new AddDirListener());
-			view.addMoveListener(new AddMoveListener());
-			view.addMoveBackListener(new AddMoveBackListener());
-			view.addRemoveListener(new AddRemoveListener());
-			view.addundoListener(new AddUndoListener());
-			view.addRedoListener(new AddRedoListener());
-			view.addRenameListener(new AddRenameListener());
-		}else {
-			view.setVisible(true);
-		}
-	}
-	public void startFileView() {
-		FileView fileView = null;
-		fileView=fileView.getInstance();
-		fileView.setVisible(true);
 	}
 
+	public void startFileView() {
+		if(fileView==null) {
+			//使用singleton pattern取得唯一的FileView
+			fileView=FileView.getInstance();
+			fileView.setVisible(true);
+			//利用controller將FileView上面的所有事件所做的事註冊進去
+			fileView.addCreateFolderListener(new AddCreateFolderListener());
+			fileView.addCreateTxtListener(new AddCreateTxtListener());
+			fileView.addCreateLogListener(new AddCreateLogListener());
+			fileView.addMoveListener(new AddMoveListener());
+			fileView.addMoveBackListener(new AddMoveBackListener());
+			fileView.addRemoveListener(new AddRemoveListener());
+			fileView.addRenameListener(new AddRenameListener());
+			fileView.addUndoListener(new AddUndoListener());
+			fileView.addRedoListener(new AddRedoListener());
+			
+			fileView.addStartContextListener(new AddStartContextListener());
+			fileView.addContextListener(new AddContextListener());
+		}else {
+			fileView.setVisible(true);
+		}
+	}
+	//新增Txt
+	class AddCreateTxtListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			String name=fileView.getAlertInput("請輸入檔案名稱");
+			if(name!=null) {
+				fileFacade.add(name,"Text");
+				String str[]= {name,"Text","0"};
+				fileView.addFile(str);
+			}
+		}
+	}
+	//新增Log
+		class AddCreateLogListener implements ActionListener{
+			public void actionPerformed(ActionEvent arg0) {
+				String name=fileView.getAlertInput("請輸入檔案名稱");
+				if(!name.equals(null)) {
+					fileFacade.add(name,"Log");
+					String str[]= {name,"Log","0"};
+					fileView.addFile(str);
+				}
+			}
+		}
 
 	//新增資料夾
-	class AddDirectoryListener implements ActionListener{
+	class AddCreateFolderListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			String name=view.getInputNameString();
-			fileFacade.add(name,"directory");
-		}
-	}
-	//列出資料夾內容
-	class AddDirListener implements ActionListener{
-		public void actionPerformed(ActionEvent arg0) {
-			
-			System.out.println(fileFacade.getList());
+		
+			String name=fileView.getAlertInput("請輸入資料夾名稱");
+			if(name!=null) {
+				fileFacade.add(name,"Directory");
+				String str[]= {name,"Directory","0"};
+				fileView.addFile(str);	
+			}
 		}
 	}
 	//移動
 	class AddMoveListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			view.clearView();
+
 			//移動到的對向
-			String targetName=view.getInputNameString();
-			if(fileFacade.move(targetName)) {
-				String result=fileFacade.getList();
+			String targetName=fileView.getSelectedFile();
+			if(!targetName.equals("")) {
+				fileView.clearModel();
+				String result=fileFacade.move(targetName);
 				String[] resultArr=result.split(",");
 				//iterator
 				for(int i=0;i<resultArr.length;i++) {
-					view.addFile(resultArr[i]);
+					String[] fileDetail=resultArr[i].split("-");
+					String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
+					fileView.addFile(str);
 				}
-			}
-			
-		}
-	}
-	//重新更改檔名
-	class AddRenameListener implements ActionListener{
-		public void actionPerformed(ActionEvent arg0) {
-			String reName=view.message();
-			String targetName=view.getInputNameString();
-			fileFacade.rename(targetName, reName);
+			}else fileView.alert("請選擇檔案");
 		}
 	}
 	//往回移動
 	class AddMoveBackListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			view.clearView();
 			//移動到的對向
-			
-			fileFacade.moveBack();
-			String result=fileFacade.getList();
-			String[] resultArr=result.split(",");
-			//iterator
-			for(int i=0;i<resultArr.length;i++) {
-				view.addFile(resultArr[i]);
+			String result=fileFacade.moveBack();
+			if(!result.equals("")) {
+				fileView.clearModel();
+				String[] resultArr=result.split(",");
+				//iterator
+				for(int i=0;i<resultArr.length;i++) {
+					String[] fileDetail=resultArr[i].split("-");
+					String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
+					fileView.addFile(str);
+				}
 			}
 			
 		}
@@ -97,11 +112,45 @@ public class FileController {
 	//刪除
 	class AddRemoveListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			String name=view.getInputNameString();
-			fileFacade.remove(name);
-			view.removeFile(name);
+			String targetName=fileView.getSelectedFile();
+			fileFacade.remove(targetName);
+			fileView.removeFile();
 		}
 	}
+	
+	//重新更改檔名
+	class AddRenameListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			String targetName=fileView.getSelectedFile();
+			String rename=fileView.getAlertInput("更改「"+targetName+"」名稱");
+			if(!rename.equals(null)) {
+				fileFacade.rename(targetName, rename);
+				fileView.renameFile(targetName,rename,fileFacade.getType(rename));
+			}
+		}
+	}
+	//啟動context的視窗
+	class AddStartContextListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			String name=fileView.getSelectedFile();
+			String result=fileFacade.getContext(name);
+			if(!name.equals("")) {
+				fileView.setContext(result);
+				fileView.startContext();
+			}else fileView.alert("請選擇檔案");
+		}
+	}
+	//更新檔案內容資料
+	class AddContextListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			String name=fileView.getSelectedFile();
+			String context=fileView.getContext();
+			fileFacade.updateFileContext(name, context);
+			
+			fileView.updateSize(name,fileFacade.getSize(name));
+		}
+	}
+	
 	//undo
 	class AddUndoListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
@@ -112,17 +161,21 @@ public class FileController {
 				String name=arr[2];
 				switch(state) {
 				case "add":
-					view.removeFile(name);
+					fileView.removeFile(name);
 					break;
 				case "remove":
-					view.addFile(name);
+					String str[]=fileFacade.getInfo(name);
+					fileView.addFile(str);
 					break;
 				case "rename":
-					view.renameFile(arr[1],arr[2]);
+					fileView.renameFile(arr[2],arr[1],fileFacade.getType(arr[1]));
+					break;
+				case "updateContext":
+					fileView.updateSize(arr[1],fileFacade.getSize(arr[1]));
 					break;
 				}
 			}
-			}
+		}
 	}
 	//redo
 		class AddRedoListener implements ActionListener{
@@ -134,16 +187,20 @@ public class FileController {
 					String name=arr[2];
 					switch(state) {
 					case "remove":
-						view.removeFile(name);
+						fileView.removeFile(name);
 						break;
 					case "add":
-						view.addFile(name);
+						String str[]=fileFacade.getInfo(name);
+						fileView.addFile(str);
 						break;
 					case "rename":
-						view.renameFile(arr[2], arr[1]);
+						fileView.renameFile(arr[1],arr[2],fileFacade.getType(arr[2]));
+						break;
+					case "updateContext":
+						fileView.updateSize(arr[1],fileFacade.getSize(arr[1]));
 						break;
 					}
 				}
-				}
 		}
+	}
 }

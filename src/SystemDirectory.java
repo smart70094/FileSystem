@@ -1,17 +1,13 @@
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
-
-
-
-public class Directory extends FileComponent{
+public class SystemDirectory extends FileComponent{
 	ArrayList<FileComponent> fileList=new ArrayList<FileComponent>();
 	
-	Directory(String name){
+	SystemDirectory(String name){
 		super.name=name;
-		super.type="Directory";
+		super.type="SystemDirectory";
+		super.size=0;
 	}
 	
 	public void add(FileComponent f) {
@@ -21,8 +17,7 @@ public class Directory extends FileComponent{
 		FileComponent f=get(name);
 		fileList.remove(f);
 	}
-	
-	
+
 	public boolean search(FileComponent targetFile) {
 		Iterator it=(Iterator) fileList.iterator();
 		FileComponent f = null;
@@ -94,8 +89,8 @@ public class Directory extends FileComponent{
 			if(f.getName().equals(name)) break;
 			if(f.type.equals("directory")||f.type.equals("systemDirectory")) 
 				f=f.get(name); 
+			
 		}
-
 		return f;
 	}
 	public void setName(String s) {
