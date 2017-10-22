@@ -1,13 +1,15 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import Iterator.StringArrayIterator;
+import Layout.FileView;
+
 public class FileController {
 	FileFacade fileFacade=new FileFacade();
 	FileView fileView;
 
-	public void testComposite() {
-		fileFacade.loadingSystemFolder();
-		
+	public void loading() {
+		fileFacade.loading();
 		//iterator
 		String str=fileFacade.getList();
 		String arrInfo[]=str.split(",");
@@ -15,9 +17,7 @@ public class FileController {
 		for(int i=0;i<arrInfo.length;i++) {
 			arr=arrInfo[i].split("-");
 			fileView.addFile(fileFacade.getInfo(arr[0]));
-		}
-			
-		
+		}	
 	}
 
 	public void startFileView() {
@@ -36,9 +36,9 @@ public class FileController {
 			fileView.addRenameListener(new AddRenameListener());
 			fileView.addUndoListener(new AddUndoListener());
 			fileView.addRedoListener(new AddRedoListener());
-			
 			fileView.addStartContextListener(new AddStartContextListener());
 			fileView.addContextListener(new AddContextListener());
+			fileView.addSearchListener(new AddSearchListener());
 		}else {
 			fileView.setVisible(true);
 		}
@@ -48,9 +48,11 @@ public class FileController {
 		public void actionPerformed(ActionEvent arg0) {
 			String name=fileView.getAlertInput("請輸入檔案名稱");
 			if(name!=null) {
-				fileFacade.add(name,"Text");
-				String str[]= {name,"Text","0"};
-				fileView.addFile(str);
+				if(fileFacade.add(name,"Text")) {
+					String str[]= {name,"Text","0"};
+					fileView.addFile(str);
+				}else 
+					fileView.alert("名稱已經在系統使用過");
 			}
 		}
 	}
@@ -59,9 +61,11 @@ public class FileController {
 			public void actionPerformed(ActionEvent arg0) {
 				String name=fileView.getAlertInput("請輸入檔案名稱");
 				if(!name.equals(null)) {
-					fileFacade.add(name,"Log");
-					String str[]= {name,"Log","0"};
-					fileView.addFile(str);
+					if(fileFacade.add(name,"Log")) {
+						String str[]= {name,"Log","0"};
+						fileView.addFile(str);
+					}else
+						fileView.alert("名稱已經在系統使用過");
 				}
 			}
 		}
@@ -72,9 +76,12 @@ public class FileController {
 		
 			String name=fileView.getAlertInput("請輸入資料夾名稱");
 			if(name!=null) {
-				fileFacade.add(name,"Directory");
-				String str[]= {name,"Directory","0"};
-				fileView.addFile(str);	
+				if(fileFacade.add(name,"Directory")) {
+					String str[]= {name,"Directory","0"};
+					fileView.addFile(str);
+				}else
+					fileView.alert("名稱已經在系統使用過");
+					
 			}
 		}
 	}
@@ -84,9 +91,11 @@ public class FileController {
 			
 				String name=fileView.getAlertInput("請輸入資料夾名稱");
 				if(name!=null) {
-					fileFacade.add(name,"SystemDirectory");
-					String str[]= {name,"SystemDirectory","0"};
-					fileView.addFile(str);	
+					if(fileFacade.add(name,"SystemDirectory")) {
+						String str[]= {name,"SystemDirectory","0"};
+						fileView.addFile(str);	
+					}else
+						fileView.alert("名稱已經在系統使用過");
 				}
 			}
 		}
@@ -96,17 +105,20 @@ public class FileController {
 			//移動到的對向
 			String targetName=fileView.getSelectedFile();
 			if(!targetName.equals("")) {
-				fileView.clearModel();
+				
 				String result=fileFacade.move(targetName);
-				String[] resultArr=result.split(",");
-				//iterator
-				StringArrayIterator it=new StringArrayIterator(resultArr);
-				while(it.hasNext()) {
-					String s=(String)it.next();
-					String[] fileDetail=s.split("-");
-					String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
-					fileView.addFile(str);
-				}
+				if(result!=null) {
+					fileView.clearModel();
+					String[] resultArr=result.split(",");
+					//iterator
+					StringArrayIterator it=new StringArrayIterator(resultArr);
+					while(it.hasNext()) {
+						String s=(String)it.next();
+						String[] fileDetail=s.split("-");
+						String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
+						fileView.addFile(str);
+					}
+				}else fileView.alert("請選擇資料夾");
 				
 			}else fileView.alert("請選擇檔案");
 		}
@@ -157,10 +169,16 @@ public class FileController {
 		public void actionPerformed(ActionEvent arg0) {
 			String name=fileView.getSelectedFile();
 			String result=fileFacade.getContext(name);
-			if(!name.equals("")) {
-				fileView.setContext(result);
-				fileView.startContext();
-			}else fileView.alert("請選擇檔案");
+			String type=fileView.getSelectedFileType();
+			
+			if(type.indexOf("Directory")==-1) {
+				if(!name.equals("")) {
+					fileView.setContext(result);
+					fileView.startContext();
+				}else fileView.alert("請選擇檔案");
+			}else {
+				fileView.alert("請選擇檔案");
+			}
 		}
 	}
 	//更新檔案內容資料
@@ -169,10 +187,34 @@ public class FileController {
 			String name=fileView.getSelectedFile();
 			String context=fileView.getContext();
 			fileFacade.updateFileContext(name, context);
-			
 			fileView.updateSize(name,fileFacade.getSize(name));
+			
 		}
 	}
+	
+	//搜尋檔案
+		class AddSearchListener implements ActionListener{
+			public void actionPerformed(ActionEvent arg0) {
+				//移動到的對向
+				String targetName=fileView.getTargetTxt();
+				if(!targetName.equals("")) {
+					String result=fileFacade.moveTarget(targetName);
+					if(result!=null) {
+						fileView.clearModel();
+						String[] resultArr=result.split(",");
+						//iterator
+						StringArrayIterator it=new StringArrayIterator(resultArr);
+						while(it.hasNext()) {
+							String s=(String)it.next();
+							String[] fileDetail=s.split("-");
+							String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
+							fileView.addFile(str);
+						}
+					}else fileView.alert("搜尋不到檔案或資料夾");
+					
+				}else fileView.alert("搜尋不到檔案或資料夾");
+			}
+		}
 	
 	//undo
 	class AddUndoListener implements ActionListener{

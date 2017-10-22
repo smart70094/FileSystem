@@ -1,3 +1,11 @@
+import Composite.Directory;
+import Composite.FileComponent;
+import Composite.Log;
+import Composite.SystemDirectory;
+import Composite.Text;
+import Memento.FileCareTaker;
+import Memento.FileInfo;
+import Memento.FileMemento;
 
 public class FileFacade {
 	FileComponent root;
@@ -8,9 +16,10 @@ public class FileFacade {
 		currentNode=root;
 		fileCareTaker=new FileCareTaker();
 	}
-	public  String loadingSystemFolder() {
+	//載入預設資料
+	public  String loading() {
 		FileComponent read=new SystemDirectory("read");
-		FileComponent jim=new SystemDirectory("jim");
+		FileComponent user=new SystemDirectory("user");
 		FileComponent tools=new SystemDirectory("tools");
 		FileComponent eclipse=new SystemDirectory("eclipse");
 		FileComponent conf=new SystemDirectory("conf");
@@ -24,22 +33,24 @@ public class FileFacade {
 		conf.add(ftxt);
 		tools.add(eclipse);
 		tools.add(as);
-		jim.add(read);
-		jim.add(tools);
-		root.add(jim); 
+		user.add(read);
+		user.add(tools);
+		root.add(user); 
 		root.add(fff);
 		root.name="root";
 		return root.getList();
 	}
 	
-	public void add(String name,String type) {
-		addFile(name,type);
-		
-		FileInfo fileInfo=new FileInfo();
-		fileInfo.state="add";
-	
-		fileInfo.context=type+","+name;
-		save(fileInfo);
+	public boolean add(String name,String type) {
+		if(root.get(name)==null) {
+			addFile(name,type);
+			FileInfo fileInfo=new FileInfo();
+			fileInfo.state="add";
+			fileInfo.context=type+","+name;
+			save(fileInfo);
+			return true;
+		}
+		return false;
 	}
 	public void addFile(String name,String type) {
 		switch(type) {
@@ -74,6 +85,7 @@ public class FileFacade {
 			renameFile(name,s);
 			save(fileInfo);
 	}
+	//更新log或txt的檔案內容
 	public void updateFileContext(String name,String s) {
 		FileComponent fc=currentNode.get(name);
 		if(!fc.context.equals(s)) {
@@ -95,9 +107,14 @@ public class FileFacade {
 	
 	//移動到下一個資料夾
 	public String move(String name) {
-		currentNode=currentNode.get(name);
-		return getList();
+		FileComponent f=root.get(name);
+		if(f!=null && !f.type.equals("Text") && !f.type.equals("Log")) {
+			currentNode=currentNode.get(name);
+			return getList();
+		}else return null;
+		
 	}
+	//移動到父資料夾
 	public String moveBack() {
 		if(root.search(currentNode)) {
 			FileComponent f=root.getParent(currentNode);
@@ -107,17 +124,29 @@ public class FileFacade {
 		}
 		return currentNode.getList();
 	}
-	
-	//移動到父資料夾
+	//移動到指定的資料夾
+	public String moveTarget(String name) {
+		FileComponent f=root.get(name);
+		if(root.search(f)) {
+			f=root.getParent(f);
+			if(f!=null) {
+				return f.getList();
+			}else return root.getList();
+				
+		}
+		return null;
+	}
+	//取得資料夾內容
 	public String getList() {
 		return currentNode.getList();
 	}
+	//取得特殊格式提供給view使用
 	public String[] getInfo(String name) {
 		FileComponent f=root.get(name);
 		String str[]=f.getInfo().split("-");
-		return str;
-		
+		return str;	
 	}
+	
 	public String getContext(String name) {
 		String result="";
 		FileComponent f=root.get(name);
