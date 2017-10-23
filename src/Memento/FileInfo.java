@@ -1,7 +1,6 @@
 package Memento;
 
 public class FileInfo implements Cloneable{
-	String source,destination;
 	public String state;
 	public String context;
 	

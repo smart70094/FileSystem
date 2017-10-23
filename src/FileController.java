@@ -3,10 +3,12 @@ import java.awt.event.ActionListener;
 
 import Iterator.StringArrayIterator;
 import Layout.FileView;
+import Layout.LoginView;
 
 public class FileController {
 	FileFacade fileFacade=new FileFacade();
 	FileView fileView;
+	LoginView loginView;
 
 	public void loading() {
 		fileFacade.loading();
@@ -39,8 +41,21 @@ public class FileController {
 			fileView.addStartContextListener(new AddStartContextListener());
 			fileView.addContextListener(new AddContextListener());
 			fileView.addSearchListener(new AddSearchListener());
+			fileView.addLoginListener(new AddLogoutListener());
+			loading();
+			
 		}else {
 			fileView.setVisible(true);
+		}
+	}
+	public void startLoginView() {
+		if(loginView==null) {
+			loginView=LoginView.getInstance();
+			loginView.setVisible(true);
+			
+			loginView.addClickBtnActionListener(new AddLoginListener());
+		}else {
+			loginView.setVisible(true);
 		}
 	}
 	//·s¼WTxt
@@ -243,29 +258,47 @@ public class FileController {
 		}
 	}
 	//redo
-		class AddRedoListener implements ActionListener{
-			public void actionPerformed(ActionEvent arg0) {
-				String cmd=fileFacade.redo();
-				if(cmd!=null) {
-					String arr[]=cmd.split(",");
-					String state=arr[0];
-					String name=arr[2];
-					switch(state) {
-					case "remove":
-						fileView.removeFile(name);
-						break;
-					case "add":
-						String str[]=fileFacade.getInfo(name);
-						fileView.addFile(str);
-						break;
-					case "rename":
-						fileView.renameFile(arr[1],arr[2],fileFacade.getType(arr[2]));
-						break;
-					case "updateContext":
-						fileView.updateSize(arr[1],fileFacade.getSize(arr[1]));
-						break;
-					}
+	class AddRedoListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			String cmd=fileFacade.redo();
+			if(cmd!=null) {
+				String arr[]=cmd.split(",");
+				String state=arr[0];
+				String name=arr[2];
+				switch(state) {
+				case "remove":
+					fileView.removeFile(name);
+					break;
+				case "add":
+					String str[]=fileFacade.getInfo(name);
+					fileView.addFile(str);
+					break;
+				case "rename":
+					fileView.renameFile(arr[1],arr[2],fileFacade.getType(arr[2]));
+					break;
+				case "updateContext":
+					fileView.updateSize(arr[1],fileFacade.getSize(arr[1]));
+					break;
 				}
+			}
 		}
 	}
+	
+	//login
+	class AddLoginListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			if(loginView.getAccount().equals("root") && loginView.getPassword().equals("root")) {
+				loginView.setVisible(false);
+				startFileView();
+			}else loginView.alert("±b±K¿ù»~");
+		}
+	}
+	//logout
+	class AddLogoutListener implements ActionListener{
+		public void actionPerformed(ActionEvent arg0) {
+			fileView.setVisible(false);
+			startLoginView();
+		}
+	}
+	
 }

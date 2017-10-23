@@ -37,6 +37,7 @@ public class FileView  extends JFrame{
 	private JButton treeBtn;
 	private JButton okBtn;
 	private JButton searchBtn;
+	private JButton logoutBtn;
 	
 	private JTextArea contextJTextField;
 	
@@ -74,7 +75,7 @@ public class FileView  extends JFrame{
 		getContentPane().add(whiteLabel);
 		
 		//登出按鈕
-		JButton logoutBtn = new JButton("登出");
+		logoutBtn = new JButton("登出");
 		logoutBtn.setFont(new Font("微軟正黑體", Font.PLAIN, 18));
 		logoutBtn.setForeground(new Color(255, 255, 255));
 		logoutBtn.setBounds(935, 0, 87, 52);
@@ -431,5 +432,8 @@ public class FileView  extends JFrame{
 	}
 	public void addSearchListener(ActionListener listenForSearchBtn) {
 		searchBtn.addActionListener(listenForSearchBtn);
+	}
+	public void addLoginListener(ActionListener listenForSearchBtn) {
+		logoutBtn.addActionListener(listenForSearchBtn);
 	}
 }
