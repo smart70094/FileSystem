@@ -59,6 +59,7 @@ public class FileFacade {
 			break;
 		case "SystemDirectory":
 			currentNode.add(new SystemDirectory(name));
+			break;
 		case "Text":
 			currentNode.add(new Text(name));	
 			break;
