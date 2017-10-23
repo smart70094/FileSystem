@@ -128,12 +128,15 @@ public class FileFacade {
 	//移動到指定的資料夾
 	public String moveTarget(String name) {
 		FileComponent f=root.get(name);
-		if(root.search(f)) {
+		if(f!=null && root.search(f)) {
 			f=root.getParent(f);
 			if(f!=null) {
-				return f.getList();
-			}else return root.getList();
-				
+				currentNode=f;
+				return currentNode.getList();
+			}else {
+				currentNode=root;
+				return currentNode.getList();
+			}
 		}
 		return null;
 	}

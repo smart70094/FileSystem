@@ -121,9 +121,8 @@ public class FileView  extends JFrame{
 		getContentPane().add(createTxtBtn);
 		
 		//createLog按鈕
-		ImageIcon createLogImg = new ImageIcon("im/createdoc.png");
+		ImageIcon createLogImg = new ImageIcon("im/createLog.png");
 		createLogBtn = new JButton("New button");
-		createLogBtn.setForeground(Color.WHITE);
 		createLogBtn.setIcon(createLogImg);
 		createLogBtn.setBounds(208, 95, 150, 36);
 		getContentPane().add(createLogBtn);

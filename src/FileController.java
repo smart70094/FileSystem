@@ -129,9 +129,11 @@ public class FileController {
 					StringArrayIterator it=new StringArrayIterator(resultArr);
 					while(it.hasNext()) {
 						String s=(String)it.next();
-						String[] fileDetail=s.split("-");
-						String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
-						fileView.addFile(str);
+						if(!s.equals("")) {
+							String[] fileDetail=s.split("-");
+							String str[]= {fileDetail[0],fileDetail[1],fileDetail[2]};
+							fileView.addFile(str);
+						}
 					}
 				}else fileView.alert("請選擇資料夾");
 				
