@@ -1,6 +1,9 @@
 package Composite;
 import java.util.ArrayList;
 
+import Memento.FileInfo;
+import Memento.FileMemento;
+
 public abstract class FileComponent {
 	
 	public String name="";
@@ -49,6 +52,9 @@ public abstract class FileComponent {
 	public String getInfo() {
 		return name+"-"+type+"-"+Integer.toString(size);
 	}
-	
-	
+	public FileMemento save(FileInfo fileInfo) {
+		FileMemento fileMemento=new FileMemento();
+		fileMemento.setFileInfo(fileInfo);
+		return fileMemento;
+	}
 }

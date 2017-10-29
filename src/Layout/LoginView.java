@@ -65,6 +65,7 @@ public class LoginView extends JFrame {
 		getContentPane().add(passwordLabel);
 		
 		accontTextField = new JTextField();
+		accontTextField.setText("root");
 		accontTextField.setBounds(421, 267, 222, 44);
 		accontTextField.setFont(new Font("Arial", Font.PLAIN, 24));
 		accontTextField.setColumns(10);
@@ -72,9 +73,11 @@ public class LoginView extends JFrame {
 		getContentPane().add(accontTextField);
 		
 		passwordTextField = new JPasswordField();
+		passwordTextField.setToolTipText("");
 		passwordTextField.setFont(new Font("Arial", Font.PLAIN, 24));
 		passwordTextField.setBounds(421, 379, 223, 44);
 		passwordTextField.setColumns(10);
+		passwordTextField.setText("root");
 		getContentPane().add(passwordTextField);
 		
 		

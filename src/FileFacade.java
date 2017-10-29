@@ -168,16 +168,14 @@ public class FileFacade {
 		return f.type;
 	}
 	public void save(FileInfo fileInfo) {
-		FileMemento fileMemento=new FileMemento();
-		fileMemento.setMemento(fileInfo);
-		fileCareTaker.addMemento(currentNode,fileMemento);
+		fileCareTaker.addMemento(currentNode,root.save(fileInfo));
 	}
 	
 	public String undo() {
 		FileMemento fileMemento=fileCareTaker.undo(currentNode);
 		
 		if(fileMemento!=null) {
-			FileInfo fileInfo=fileMemento.getMemento();
+			FileInfo fileInfo=fileMemento.getFileInfo();
 			String state=fileInfo.state;
 			String context=fileInfo.context;
 			String arr[];
@@ -206,7 +204,7 @@ public class FileFacade {
 	public String redo() {
 		FileMemento fileMemento=fileCareTaker.redo(currentNode);
 		if(fileMemento!=null) {
-			FileInfo fileInfo=fileMemento.getMemento();
+			FileInfo fileInfo=fileMemento.getFileInfo();
 			String state=fileInfo.state;
 			String context=fileInfo.context;
 			String arr[];

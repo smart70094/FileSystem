@@ -2,10 +2,10 @@ package Memento;
 
 public class FileMemento  implements Cloneable{
 	FileInfo fileInfo;
-	public void setMemento(FileInfo fileInfo) {
+	public void setFileInfo(FileInfo fileInfo) {
 		this.fileInfo=fileInfo;
 	}
-	public FileInfo getMemento() {
+	public FileInfo getFileInfo() {
 		return fileInfo;
 	}
 	

@@ -50,12 +50,12 @@ public class FileCareTaker {
 					fm=list.get(--index);
 					index--;
 					fileIndexMap.put(fc, index);
-					return fm;
+					return fm.clone();
 				}
 				else if(index>=0) {
 					fm=list.get(index--);
 					fileIndexMap.put(fc, index);
-					return fm;
+					return fm.clone();
 				}
 			}
 			
@@ -66,15 +66,19 @@ public class FileCareTaker {
 	}
 	
 	public FileMemento redo(FileComponent fc) {
-		ArrayList<FileMemento> list=fileStateMap.get(fc);
-		if(list!=null) {
-			int index=fileIndexMap.get(fc);
-			int size=list.size()-1;
-			 if((index+1)<=size) {
-				FileMemento fm=list.get(++index);
-				fileIndexMap.put(fc, index);
-				return fm;
+		try {
+			ArrayList<FileMemento> list=fileStateMap.get(fc);
+			if(list!=null) {
+				int index=fileIndexMap.get(fc);
+				int size=list.size()-1;
+				 if((index+1)<=size) {
+					FileMemento fm=list.get(++index);
+					fileIndexMap.put(fc, index);
+					return fm.clone();
+				}
 			}
+		}catch(Exception e) {
+			System.out.println(e.toString());
 		}
 		return null;
 	}
